@@ -87,6 +87,8 @@ namespace ouster {
        POLARITY_ACTIVE_HIGH 
     };
 
+#undef BAUD_9600
+#undef BAUD_115200
     enum NMEABaudRate 
     { 
       BAUD_9600 = 1, 

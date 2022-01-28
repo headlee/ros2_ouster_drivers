@@ -55,12 +55,14 @@ add_library(${library_name} SHARED
   src/ouster_driver.cpp
   src/lifecycle_interface.cpp
   src/sensor.cpp
-  src/sensor_tins.cpp
+  #src/sensor_tins.cpp
   src/client/client.cpp
   src/client/lidar_scan.cpp
   src/client/netcompat.cpp
   src/client/types.cpp
 )
+target_compile_definitions(${library_name} PUBLIC M_PI=3.14159265358979323846 NOMINMAX)
+set_target_properties(${library_name} PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS 1)
 
 ament_target_dependencies(${library_name}
   ${dependencies}
@@ -68,27 +70,29 @@ ament_target_dependencies(${library_name}
 
 target_link_libraries(${library_name}
   jsoncpp_lib
-  tins
+  #tins
   ${PCL_LIBRARIES}
+  ws2_32
 )
 
 add_executable(${executable_name}
   src/main.cpp
 )
-add_executable(${tins_executable_name}
-  src/main_tins.cpp
-)
+# add_executable(${tins_executable_name}
+#   src/main_tins.cpp
+# )
+
 
 target_link_libraries(${executable_name} ${library_name})
-target_link_libraries(${tins_executable_name} ${library_name})
+#target_link_libraries(${tins_executable_name} ${library_name})
 
 rclcpp_components_register_nodes(${library_name} "${PROJECT_NAME}::Driver")
-rclcpp_components_register_nodes(${library_name} "${PROJECT_NAME}::TinsDriver")
+#rclcpp_components_register_nodes(${library_name} "${PROJECT_NAME}::TinsDriver")
 
 set(node_plugins "${node_plugins}${PROJECT_NAME}::Driver;$<TARGET_FILE:ouster_driver>\n")
-set(node_plugins "${node_plugins}${PROJECT_NAME}::TinsDriver;$<TARGET_FILE:ouster_driver>\n")
+#set(node_plugins "${node_plugins}${PROJECT_NAME}::TinsDriver;$<TARGET_FILE:ouster_driver>\n")
 
-install(TARGETS ${executable_name} ${tins_executable_name} ${library_name}
+install(TARGETS ${executable_name} ${library_name}# ${tins_executable_name} ${library_name}
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION lib/${PROJECT_NAME}
